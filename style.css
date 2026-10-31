@@ -1,39 +1,164 @@
+/* 져미의 선반 — 만든 것을 어두운 진열장 유리 선반에 올려 둔다.
+   PHOTO DAY 와 이어지게 잉크 · 라임 · 핑크를 쓴다. 글자 대비는 모두 4.5:1 이상. */
 :root {
-  --bg: #f6f7f9; --panel: #fff; --ink: #14171c; --body: #3a404b; --dim: #7c838f; --line: #e3e6eb;
-  --accent: #4f46e5; --accent-soft: #eef0ff; --warn: #b26a00; --warn-soft: #fdf3e3;
+  --bg: #0f1030;           /* 진열장 안쪽 */
+  --bg2: #1a1b45;
+  --ink: #0f1030;
+  --text: #f4f5ff;
+  --dim: #b9bde3;          /* 어두운 바탕 위 보조 글자 9:1 */
+  --lime: #d8ff3e;
+  --pink: #ff7fa3;
+  --card: #ffffff;
+  --muted: #4a4d75;        /* 흰 카드 위 보조 글자 8:1 */
+  --hair: #e3e5f3;
+  --out: cubic-bezier(.2, .8, .2, 1);
+  --back: cubic-bezier(.34, 1.56, .64, 1);
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--body); line-height: 1.6;
-  font-family: Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-#app { max-width: 980px; margin: 0 auto; padding: 28px 16px 56px; }
-.hero { padding: 8px 0 22px; }
-.badge { display: inline-block; font-size: 12px; font-weight: 800; color: var(--accent); background: var(--accent-soft);
-  padding: 4px 10px; border-radius: 999px; }
-h1 { font-size: 30px; color: var(--ink); letter-spacing: -.8px; line-height: 1.25; margin: 10px 0 8px; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100dvh; }
+body {
+  color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; word-break: keep-all;
+  font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  background: radial-gradient(900px 600px at 50% -10%, #2a2c6e, var(--bg) 60%) fixed, var(--bg);
+}
+body.locked { overflow: hidden; }
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 10px; }
+
+#app { max-width: 720px; margin: 0 auto; padding: 28px 16px 56px; }
+.hero { padding: 6px 0 20px; text-align: center; }
+.badge {
+  display: inline-block; font-size: 13px; font-weight: 800; color: var(--ink); background: var(--lime);
+  padding: 4px 12px; border-radius: 999px;
+}
+.shelf-label {
+  margin: 14px 0 0; font: 400 54px/.9 "Bagel Fat One", var(--font, sans-serif); color: var(--lime); letter-spacing: -1px;
+  animation: rise .7s var(--back) backwards;
+}
+h1 { font-size: 24px; color: var(--text); letter-spacing: -.5px; line-height: 1.3; margin: 12px 0 6px; font-weight: 800; }
 .muted { color: var(--dim); }
-.jump { display: flex; gap: 14px; margin-top: 12px; font-size: 14px; font-weight: 700; }
-.jump a { color: var(--accent); text-decoration: none; }
-.cards { display: grid; grid-template-columns: 1fr; gap: 14px; }
-@media (min-width: 720px) { .cards { grid-template-columns: 1fr 1fr; } }
-.card { display: grid; grid-template-columns: 116px 1fr; gap: 14px; background: var(--panel); border: 1px solid var(--line);
-  border-radius: 14px; padding: 12px; box-shadow: 0 1px 2px rgba(20,23,28,.04); }
-.card img, .noimg { width: 116px; height: 145px; object-fit: cover; object-position: top; border-radius: 10px;
-  border: 1px solid var(--line); background: #eef0f3; }
-.noimg { display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--dim); }
-.card.empty { opacity: .6; border-style: dashed; }
-.wk { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: .06em; }
-.card h3 { margin: 2px 0 4px; font-size: 17px; color: var(--ink); }
-.line { margin: 0 0 8px; font-size: 13.5px; }
-.judge { font-size: 13px; background: var(--warn-soft); color: #6b4a10; border-radius: 8px; padding: 7px 9px; }
-.judge b { display: block; font-size: 11px; color: var(--warn); margin-bottom: 2px; }
-.ai { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
-.ai span { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #f1f2f4; color: var(--body); }
-.go { font-size: 13px; font-weight: 800; color: var(--accent); text-decoration: none; }
-.go.off { color: var(--dim); font-weight: 600; }
-.proposal { margin-top: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 18px; }
-.proposal .label { font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: .06em; }
-.proposal h2 { font-size: 22px; color: var(--ink); margin: 6px 0 8px; letter-spacing: -.4px; }
-.proposal .ask { font-size: 16px; font-weight: 800; color: var(--ink); background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; }
-.proposal h3 { font-size: 14px; color: var(--ink); margin: 16px 0 6px; }
+#intro { margin: 0 auto; max-width: 420px; font-size: 15px; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.95); } }
+
+/* ── 선반 ─────────────────────────────────────────── */
+.shelves { display: grid; gap: 34px; margin-top: 14px; }
+.shelf { position: relative; }
+.row {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end;
+  padding: 0 14px; min-height: 178px;
+}
+/* 유리 선반 — 위는 밝은 모서리, 아래는 그림자 */
+.board {
+  height: 12px; margin-top: -2px; border-radius: 4px;
+  background: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .12) 40%, rgba(255, 255, 255, .06));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 16px 22px -10px rgba(0, 0, 0, .7);
+  position: relative;
+}
+.board::before, .board::after {                 /* 선반 받침 나사 */
+  content: ""; position: absolute; top: 3px; width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255, 255, 255, .55);
+}
+.board::before { left: 10px; }
+.board::after { right: 10px; }
+
+.slot { position: relative; display: grid; justify-items: center; align-content: end; min-height: 150px; }
+.item {
+  background: none; border: 0; padding: 0; cursor: pointer; color: inherit; font: inherit;
+  animation: drop .6s var(--back) backwards; animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes drop { from { opacity: 0; transform: translateY(-26px) rotate(-6deg); } }
+/* 선반 위 사진 한 장 — 폴라로이드처럼 세워 둔다 */
+.print {
+  display: flex; flex-direction: column; width: 100%; max-width: 150px;
+  background: var(--card); border-radius: 6px; padding: 7px 7px 10px;
+  box-shadow: 0 14px 20px -12px rgba(0, 0, 0, .8), 0 2px 0 rgba(0, 0, 0, .15);
+  transform: rotate(-2deg); transform-origin: bottom center;
+  transition: transform .35s var(--back), box-shadow .2s var(--out);
+}
+.item:nth-child(2) .print { transform: rotate(1.5deg); }
+.item:hover .print, .item:focus-visible .print { transform: translateY(-10px) rotate(0); box-shadow: 0 24px 26px -14px rgba(0, 0, 0, .85); }
+.item.out .print { opacity: 0; }
+.print img, .noimg {
+  width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top; border-radius: 3px; display: block;
+  background: #eef0f6;
+}
+.noimg { display: grid; place-items: center; color: var(--muted); font-weight: 800; }
+.cap {
+  margin-top: 7px; font-size: 12.5px; font-weight: 800; color: var(--ink); line-height: 1.3; text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tag-wk {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+  background: var(--lime); color: var(--ink); font-size: 12px; font-weight: 900; padding: 1px 9px; border-radius: 999px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* 아직 비어 있는 칸 */
+.empty {
+  border: 2px dashed rgba(255, 255, 255, .28); border-radius: 8px; width: 100%; max-width: 150px;
+  aspect-ratio: 4 / 5.6; align-content: center; gap: 2px; text-align: center; justify-self: center;
+}
+.ghost { font: 400 22px "Bagel Fat One", sans-serif; color: rgba(255, 255, 255, .5); }
+.soon { font-size: 12px; color: var(--dim); }
+
+/* ── 꺼내 본 물건 + 설명 카드 ──────────────────────── */
+.detail { position: fixed; inset: 0; z-index: 20; }
+.backdrop {
+  position: absolute; inset: 0; background: rgba(15, 16, 48, .55);
+  backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0);
+  opacity: 0; transition: opacity .3s var(--out), backdrop-filter .3s var(--out);
+}
+.detail.on .backdrop { opacity: 1; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lifted { position: fixed; z-index: 2; pointer-events: none; transform: rotate(-2deg); }
+.lifted .print { max-width: none; height: 100%; transform: none !important; box-shadow: 0 30px 40px -18px rgba(0, 0, 0, .9); }
+.lifted .print img { aspect-ratio: auto; flex: 1; min-height: 0; }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; margin: 0 auto; max-width: 560px;
+  max-height: 64dvh; overflow-y: auto;
+  background: var(--card); color: var(--ink); border-radius: 26px 26px 0 0;
+  padding: 10px 20px calc(24px + env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform .42s var(--out);
+}
+.detail.on .sheet { transform: none; }
+.grip { width: 44px; height: 5px; border-radius: 99px; background: var(--hair); margin: 2px auto 10px; }
+.close {
+  position: absolute; top: 12px; right: 14px; width: 44px; height: 44px; border-radius: 50%;
+  border: 0; background: #f1f2f8; color: var(--ink); font-size: 18px; cursor: pointer;
+}
+.close:focus-visible, .sheet :focus-visible { outline-color: #2438f5; }
+.wk { margin: 0; font-size: 12px; font-weight: 900; color: #2438f5; letter-spacing: .06em; }
+.sheet h2 { margin: 2px 50px 6px 0; font-size: 22px; letter-spacing: -.4px; line-height: 1.3; }
+.line { margin: 0 0 12px; font-size: 14.5px; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tags span { font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--hair); }
+/* 숫자 칸 2×2 */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stats div { background: #f4f5fb; border-radius: 14px; padding: 10px 12px; display: grid; }
+.stats .k { font-size: 12px; font-weight: 800; color: var(--muted); letter-spacing: .04em; }
+.stats .v { font: 400 28px/1.15 "Bagel Fat One", sans-serif; color: var(--ink); }
+.judge { font-size: 14px; background: #fbffe0; border: 1.5px solid #e6f5a0; border-radius: 12px; padding: 10px 12px; }
+.judge b { display: block; font-size: 12px; color: #4a5a00; margin-bottom: 2px; }
+.go {
+  display: flex; align-items: center; justify-content: center; min-height: 52px; margin-top: 14px;
+  background: var(--ink); color: var(--lime); border-radius: 999px; text-decoration: none; font-weight: 900;
+}
+.go:hover { background: #22245a; }
+
+/* ── 제안 ─────────────────────────────────────────── */
+.proposal { margin-top: 34px; background: var(--card); color: var(--ink); border-radius: 18px; padding: 20px 18px; }
+.proposal .label { font-size: 12px; font-weight: 800; color: #2438f5; letter-spacing: .06em; }
+.proposal h2 { font-size: 22px; margin: 6px 0 8px; letter-spacing: -.4px; }
+.proposal .ask { font-size: 16px; font-weight: 800; background: #eef0ff; border-radius: 10px; padding: 10px 12px; }
+.proposal h3 { font-size: 14px; margin: 16px 0 6px; }
 .proposal ul { padding-left: 18px; margin: 0; font-size: 14px; }
-.fineprint { margin-top: 20px; font-size: 12px; color: var(--dim); text-align: center; }
+.fineprint { margin-top: 30px; font-size: 12px; color: var(--dim); text-align: center; }
+
+@media (min-width: 640px) {
+  .row { gap: 26px; padding: 0 28px; min-height: 230px; }
+  .print { max-width: 180px; }
+  .empty { max-width: 180px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
