@@ -1,183 +1,164 @@
-/* 져미의 선반 — 만든 것을 어두운 진열장 선반 위 '상자'로 진열한다 (v0 시안).
-   PHOTO DAY 와 이어지게 잉크 · 코발트 · 라임 · 핑크 · 라벤더. 글자 대비는 모두 4.5:1 이상. */
+/* 져미의 선반 — 만든 것을 어두운 진열장 유리 선반에 올려 둔다.
+   PHOTO DAY 와 이어지게 잉크 · 라임 · 핑크를 쓴다. 글자 대비는 모두 4.5:1 이상. */
 :root {
-  --bg: #0f1030;
-  --panel: #1b1c48;        /* 설명 카드 */
-  --cell: #13143a;
+  --bg: #0f1030;           /* 진열장 안쪽 */
+  --bg2: #1a1b45;
+  --ink: #0f1030;
   --text: #f4f5ff;
   --dim: #b9bde3;          /* 어두운 바탕 위 보조 글자 9:1 */
-  --blue: #2438f5;
   --lime: #d8ff3e;
   --pink: #ff7fa3;
-  --lav: #b9a3ff;
-  --cream: #fbf7ec;
-  --ink: #0f1030;
+  --card: #ffffff;
+  --muted: #4a4d75;        /* 흰 카드 위 보조 글자 8:1 */
+  --hair: #e3e5f3;
   --out: cubic-bezier(.2, .8, .2, 1);
   --back: cubic-bezier(.34, 1.56, .64, 1);
-  --ease: cubic-bezier(.22, 1, .36, 1);   /* 빠르게 출발해 부드럽게 멈춘다 — 3D 상자에는 튕김 없이 */
-  --w: clamp(70px, 21vw, 150px);          /* 상자 너비 */
-  --d: calc(var(--w) * .22);              /* 상자 깊이 */
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; min-height: 100dvh; }
-html { scrollbar-gutter: stable; }     /* 상세를 열 때 스크롤 막대가 사라지며 화면이 밀리지 않게 */
 body {
   color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; word-break: keep-all;
   font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  background: radial-gradient(900px 620px at 50% -10%, #2a2c6e, var(--bg) 62%) fixed, var(--bg);
+  background: radial-gradient(900px 600px at 50% -10%, #2a2c6e, var(--bg) 60%) fixed, var(--bg);
 }
 body.locked { overflow: hidden; }
-:focus-visible { outline: 3px solid var(--lime); outline-offset: 4px; border-radius: 10px; }
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 10px; }
 
-#app { max-width: 760px; margin: 0 auto; padding: 28px 16px 56px; }
-.hero { padding: 6px 0 26px; text-align: center; }
-.badge { display: inline-block; font-size: 13px; font-weight: 800; color: var(--ink); background: var(--lime); padding: 4px 12px; border-radius: 999px; }
+#app { max-width: 720px; margin: 0 auto; padding: 28px 16px 56px; }
+.hero { padding: 6px 0 20px; text-align: center; }
+.badge {
+  display: inline-block; font-size: 13px; font-weight: 800; color: var(--ink); background: var(--lime);
+  padding: 4px 12px; border-radius: 999px;
+}
 .shelf-label {
-  margin: 14px 0 0; font: 400 56px/.9 "Bagel Fat One", sans-serif; color: var(--lime); letter-spacing: -1px;
+  margin: 14px 0 0; font: 400 54px/.9 "Bagel Fat One", var(--font, sans-serif); color: var(--lime); letter-spacing: -1px;
   animation: rise .7s var(--back) backwards;
 }
-h1 { font-size: 24px; letter-spacing: -.5px; line-height: 1.3; margin: 12px 0 6px; font-weight: 800; }
+h1 { font-size: 24px; color: var(--text); letter-spacing: -.5px; line-height: 1.3; margin: 12px 0 6px; font-weight: 800; }
 .muted { color: var(--dim); }
 #intro { margin: 0 auto; max-width: 420px; font-size: 15px; }
-.progress {
-  display: inline-flex; align-items: center; gap: 8px; margin: 16px 0 0; padding: 5px 14px; border-radius: 999px;
-  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); font-size: 13px; font-weight: 700;
-}
-.progress i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
 @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.95); } }
 
 /* ── 선반 ─────────────────────────────────────────── */
-.shelves { display: grid; gap: 40px; }
+.shelves { display: grid; gap: 34px; margin-top: 14px; }
+.shelf { position: relative; }
 .row {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; justify-items: center;
-  padding: 0 4%; perspective: 900px; position: relative; z-index: 1; margin-bottom: -18px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end;
+  padding: 0 14px; min-height: 178px;
 }
-/* 선반 — 윗면(사다리꼴) + 앞쪽 모서리 + 받침 나사 */
-.board { position: relative; height: 14px; margin: 0 2px; border-radius: 0 0 8px 8px; background: linear-gradient(#cfd1ec, #9a9ec8); box-shadow: 0 18px 24px -12px rgba(0, 0, 0, .8); }
-.board::before {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 26px;
-  clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%);
-  background: linear-gradient(rgba(255, 255, 255, .08), rgba(255, 255, 255, .18));
+/* 유리 선반 — 위는 밝은 모서리, 아래는 그림자 */
+.board {
+  height: 12px; margin-top: -2px; border-radius: 4px;
+  background: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .12) 40%, rgba(255, 255, 255, .06));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 16px 22px -10px rgba(0, 0, 0, .7);
+  position: relative;
 }
-.board::after {
-  content: ""; position: absolute; inset: 4px 12px auto; height: 6px;
-  background: radial-gradient(circle, #6d7199 3px, transparent 3.5px) left / 6px 6px no-repeat,
-              radial-gradient(circle, #6d7199 3px, transparent 3.5px) right / 6px 6px no-repeat;
+.board::before, .board::after {                 /* 선반 받침 나사 */
+  content: ""; position: absolute; top: 3px; width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255, 255, 255, .55);
 }
-.labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; text-align: center; }
-.lab { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.chip { font-size: 12px; font-weight: 900; color: var(--ink); background: var(--lime); padding: 1px 9px; border-radius: 7px; }
-.chip.off { background: rgba(255, 255, 255, .14); color: var(--text); }
-.name { font: 400 16px/1.2 "Bagel Fat One", sans-serif; margin-top: 2px; }
-.sub { font-size: 12.5px; font-weight: 800; }
-.short { font-size: 12px; color: var(--dim); line-height: 1.45; }
-.soon { font-size: 12.5px; color: var(--dim); }
+.board::before { left: 10px; }
+.board::after { right: 10px; }
 
-/* ── 상자 (CSS 3D) ────────────────────────────────── */
-.slot { background: none; border: 0; padding: 0 0 6px; color: inherit; font: inherit; cursor: default; }
-button.slot { cursor: pointer; }
-.box {
-  position: relative; display: block; width: var(--w); aspect-ratio: 3 / 4;
-  transform-style: preserve-3d; transform: rotateX(-6deg) rotateY(-24deg);
-  transition: transform .6s var(--ease);
-  animation: place .9s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 70ms);
-  will-change: transform;
+.slot { position: relative; display: grid; justify-items: center; align-content: end; min-height: 150px; }
+.item {
+  background: none; border: 0; padding: 0; cursor: pointer; color: inherit; font: inherit;
+  animation: drop .6s var(--back) backwards; animation-delay: calc(var(--i, 0) * 70ms);
 }
-@keyframes place { from { opacity: 0; transform: translateY(-28px) rotateX(-6deg) rotateY(-44deg); } }
-button.slot:hover .box, button.slot:focus-visible .box { transform: translateY(-12px) rotateX(-8deg) rotateY(-12deg); }
-.slot.out .box { opacity: 0; }
-.face { position: absolute; display: block; backface-visibility: hidden; }
-.front { inset: 0; transform: translateZ(calc(var(--d) / 2)); border-radius: 3px; overflow: hidden; }
-.side {
-  top: 0; bottom: 0; right: 0; width: var(--d);
-  transform-origin: right center; transform: translateZ(calc(var(--d) / 2)) rotateY(90deg);
+@keyframes drop { from { opacity: 0; transform: translateY(-26px) rotate(-6deg); } }
+/* 선반 위 사진 한 장 — 폴라로이드처럼 세워 둔다 */
+.print {
+  display: flex; flex-direction: column; width: 100%; max-width: 150px;
+  background: var(--card); border-radius: 6px; padding: 7px 7px 10px;
+  box-shadow: 0 14px 20px -12px rgba(0, 0, 0, .8), 0 2px 0 rgba(0, 0, 0, .15);
+  transform: rotate(-2deg); transform-origin: bottom center;
+  transition: transform .35s var(--back), box-shadow .2s var(--out);
 }
-.top {
-  left: 0; right: 0; top: 0; height: var(--d);
-  transform-origin: center top; transform: translateZ(calc(var(--d) / 2)) rotateX(90deg);
+.item:nth-child(2) .print { transform: rotate(1.5deg); }
+.item:hover .print, .item:focus-visible .print { transform: translateY(-10px) rotate(0); box-shadow: 0 24px 26px -14px rgba(0, 0, 0, .85); }
+.item.out .print { opacity: 0; }
+.print img, .noimg {
+  width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top; border-radius: 3px; display: block;
+  background: #eef0f6;
 }
-/* 채워진 상자 — 크림색 앞면 그림 + 잉크 띠, 코발트 옆면 */
-.full .front { background: var(--cream); display: flex; flex-direction: column; }
-.full .art { flex: 1; display: grid; place-items: center; padding: 8%; min-height: 0; }
-.full .art svg, .full .art img { width: 100%; height: 100%; object-fit: contain; }
-.full .band {
-  background: var(--ink); color: var(--lime); text-align: center; padding: 6% 4%;
-  font: 400 calc(var(--w) * .11) "Bagel Fat One", sans-serif; letter-spacing: .5px; white-space: nowrap;
+.noimg { display: grid; place-items: center; color: var(--muted); font-weight: 800; }
+.cap {
+  margin-top: 7px; font-size: 12.5px; font-weight: 800; color: var(--ink); line-height: 1.3; text-align: center;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.full .side { background: linear-gradient(90deg, #1a2bd0, var(--blue)); display: grid; place-items: center; overflow: hidden; }
-.full .side span {
-  writing-mode: vertical-rl; color: var(--lime); font: 400 calc(var(--w) * .09) "Bagel Fat One", sans-serif; white-space: nowrap;
+.tag-wk {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+  background: var(--lime); color: var(--ink); font-size: 12px; font-weight: 900; padding: 1px 9px; border-radius: 999px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
 }
-.full .top { background: #4a5cff; }
-/* 빈 상자 — 점선 유리 상자 */
-.empty .front {
-  border: 2px dashed rgba(255, 255, 255, .32); background: rgba(255, 255, 255, .04);
-  display: grid; place-items: center;
-}
-.empty .front b { font: 400 calc(var(--w) * .2) "Bagel Fat One", sans-serif; color: rgba(255, 255, 255, .55); }
-.empty .side, .empty .top { border: 1.5px dashed rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .03); }
-
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* 아직 비어 있는 칸 */
+.empty {
+  border: 2px dashed rgba(255, 255, 255, .28); border-radius: 8px; width: 100%; max-width: 150px;
+  aspect-ratio: 4 / 5.6; align-content: center; gap: 2px; text-align: center; justify-self: center;
+}
+.ghost { font: 400 22px "Bagel Fat One", sans-serif; color: rgba(255, 255, 255, .5); }
+.soon { font-size: 12px; color: var(--dim); }
 
-/* ── 꺼내 본 상자 + 설명 카드 ──────────────────────── */
+/* ── 꺼내 본 물건 + 설명 카드 ──────────────────────── */
 .detail { position: fixed; inset: 0; z-index: 20; }
 .backdrop {
-  position: absolute; inset: 0; background: rgba(15, 16, 48, .6);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  opacity: 0; transition: opacity .4s var(--ease);       /* 흐림 정도는 그대로, 투명도만 바꾼다 (가볍다) */
+  position: absolute; inset: 0; background: rgba(15, 16, 48, .55);
+  backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0);
+  opacity: 0; transition: opacity .3s var(--out), backdrop-filter .3s var(--out);
 }
-.detail.on .backdrop { opacity: 1; }
-.lifted { position: fixed; z-index: 2; pointer-events: none; perspective: 900px; transform-origin: 0 0; will-change: transform; }
-.lifted .box { animation: none; transition: none; transform: rotateX(-6deg) rotateY(-14deg); }
+.detail.on .backdrop { opacity: 1; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lifted { position: fixed; z-index: 2; pointer-events: none; transform: rotate(-2deg); }
+.lifted .print { max-width: none; height: 100%; transform: none !important; box-shadow: 0 30px 40px -18px rgba(0, 0, 0, .9); }
+.lifted .print img { aspect-ratio: auto; flex: 1; min-height: 0; }
 
 .sheet {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; margin: 0 auto; max-width: 520px;
-  max-height: 66dvh; overflow-y: auto;
-  background: var(--panel); color: var(--text); border-radius: 26px 26px 0 0;
-  border: 1px solid rgba(255, 255, 255, .1); border-bottom: 0;
-  padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
-  transform: translateY(100%); transition: transform .42s cubic-bezier(.4, 0, .2, 1); will-change: transform;
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; margin: 0 auto; max-width: 560px;
+  max-height: 64dvh; overflow-y: auto;
+  background: var(--card); color: var(--ink); border-radius: 26px 26px 0 0;
+  padding: 10px 20px calc(24px + env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform .42s var(--out);
 }
-.detail.on .sheet { transform: none; transition: transform .6s var(--ease) .08s; }
-.grip { width: 44px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, .25); margin: 2px auto 10px; }
+.detail.on .sheet { transform: none; }
+.grip { width: 44px; height: 5px; border-radius: 99px; background: var(--hair); margin: 2px auto 10px; }
 .close {
-  position: absolute; top: 12px; right: 14px; width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .06); color: var(--text); font-size: 18px;
+  position: absolute; top: 12px; right: 14px; width: 44px; height: 44px; border-radius: 50%;
+  border: 0; background: #f1f2f8; color: var(--ink); font-size: 18px; cursor: pointer;
 }
-.wk { display: inline-block; margin: 0; font-size: 12px; font-weight: 900; color: var(--ink); background: var(--lime); padding: 1px 8px; border-radius: 7px; }
-.sheet h2 { margin: 8px 52px 4px 0; font-size: 22px; line-height: 1.3; }
-#d-title { font: 400 24px "Bagel Fat One", sans-serif; letter-spacing: .3px; }
-#d-sub { font-size: 14px; font-weight: 800; color: var(--dim); }
-.line { margin: 0 0 12px; font-size: 14.5px; color: var(--dim); }
+.close:focus-visible, .sheet :focus-visible { outline-color: #2438f5; }
+.wk { margin: 0; font-size: 12px; font-weight: 900; color: #2438f5; letter-spacing: .06em; }
+.sheet h2 { margin: 2px 50px 6px 0; font-size: 22px; letter-spacing: -.4px; line-height: 1.3; }
+.line { margin: 0 0 12px; font-size: 14.5px; color: var(--muted); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.tags span { font-size: 13px; font-weight: 700; padding: 3px 11px; border-radius: 999px; border: 1.5px solid; }
-.tags .t0 { color: var(--lime); }
-.tags .t1 { color: var(--lav); }
-.tags .t2 { color: var(--pink); }
+.tags span { font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--hair); }
 /* 숫자 칸 2×2 */
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-.stats div { background: var(--cell); border: 1px solid rgba(255, 255, 255, .08); border-radius: 14px; padding: 10px 14px; display: grid; }
-.stats .k { font-size: 12.5px; font-weight: 700; color: var(--dim); }
-.stats .v { font-size: 28px; font-weight: 900; line-height: 1.2; }
-.judge { font-size: 14.5px; background: #26285a; border-left: 4px solid var(--pink); border-radius: 12px; padding: 10px 14px; }
-.judge b { display: block; font-size: 12.5px; color: var(--pink); margin-bottom: 2px; }
+.stats div { background: #f4f5fb; border-radius: 14px; padding: 10px 12px; display: grid; }
+.stats .k { font-size: 12px; font-weight: 800; color: var(--muted); letter-spacing: .04em; }
+.stats .v { font: 400 28px/1.15 "Bagel Fat One", sans-serif; color: var(--ink); }
+.judge { font-size: 14px; background: #fbffe0; border: 1.5px solid #e6f5a0; border-radius: 12px; padding: 10px 12px; }
+.judge b { display: block; font-size: 12px; color: #4a5a00; margin-bottom: 2px; }
 .go {
-  display: flex; align-items: center; justify-content: center; min-height: 54px; margin-top: 14px;
-  background: var(--lime); color: var(--ink); border-radius: 999px; text-decoration: none; font-weight: 900; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; min-height: 52px; margin-top: 14px;
+  background: var(--ink); color: var(--lime); border-radius: 999px; text-decoration: none; font-weight: 900;
 }
-.go:hover { filter: brightness(.95); }
-.go:focus-visible { outline-color: #fff; }
+.go:hover { background: #22245a; }
 
 /* ── 제안 ─────────────────────────────────────────── */
-.proposal { margin-top: 34px; background: var(--panel); border-radius: 18px; padding: 20px 18px; }
-.proposal .label { font-size: 12px; font-weight: 800; color: var(--lime); letter-spacing: .06em; }
+.proposal { margin-top: 34px; background: var(--card); color: var(--ink); border-radius: 18px; padding: 20px 18px; }
+.proposal .label { font-size: 12px; font-weight: 800; color: #2438f5; letter-spacing: .06em; }
 .proposal h2 { font-size: 22px; margin: 6px 0 8px; letter-spacing: -.4px; }
-.proposal .ask { font-size: 16px; font-weight: 800; background: var(--cell); border-radius: 10px; padding: 10px 12px; }
+.proposal .ask { font-size: 16px; font-weight: 800; background: #eef0ff; border-radius: 10px; padding: 10px 12px; }
 .proposal h3 { font-size: 14px; margin: 16px 0 6px; }
 .proposal ul { padding-left: 18px; margin: 0; font-size: 14px; }
-.fineprint { margin-top: 34px; font-size: 12px; color: var(--dim); text-align: center; }
+.fineprint { margin-top: 30px; font-size: 12px; color: var(--dim); text-align: center; }
 
+@media (min-width: 640px) {
+  .row { gap: 26px; padding: 0 28px; min-height: 230px; }
+  .print { max-width: 180px; }
+  .empty { max-width: 180px; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
